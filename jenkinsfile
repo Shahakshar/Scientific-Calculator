@@ -33,12 +33,12 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    withCredentials([string(credentialsId: 'DockerHubCred', variable: 'DOCKER_HUB_PASSWORD')]) {
-                        sh '''
-                        docker tag $DOCKER_IMAGE_NAME akdev6298/$DOCKER_IMAGE_NAME:latest
-                        docker push akdev6298/$DOCKER_IMAGE_NAME:latest
-                        '''
+                steps {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+                        sh 'docker tag dev-cal $DOCKER_IMAGE'
+                        sh 'docker images'
+                        sh 'docker push $DOCKER_IMAGE'
                     }
                 }
             }
@@ -47,13 +47,9 @@ pipeline {
         stage('Run Ansible Playbook') {
             steps {
                 script {
-                    withCredentials([
-                        string(credentialsId: 'LOCALPASS', variable: 'ANSIBLE_BECOME_PASS'),
-                        string(credentialsId: 'LOCALPASS', variable: 'ANSIBLE_SSH_PASS')
-                    ]) {
+                    withCredentials([string(credentialsId: 'ANSIBLE_SUDO_PASS', variable: 'ANSIBLE_BECOME_PASS')]) {
                         sh '''
-                        ansible-playbook -i inventory.ini deploy.yml \
-                        --extra-vars "ansible_become_pass=$ANSIBLE_BECOME_PASS ansible_ssh_pass=$ANSIBLE_SSH_PASS"
+                            ansible-playbook -i inventory.ini deploy.yml --extra-vars "ansible_become_pass=$ANSIBLE_BECOME_PASS"
                         '''
                     }
                 }
