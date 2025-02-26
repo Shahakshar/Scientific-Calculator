@@ -4,7 +4,7 @@
   become: yes
   tasks:
     - name: Pull the latest Docker image from Docker Hub
-      shell: docker pull akdev6298/scientific-dev-cal:latest
+      shell: docker pull akdev6298/scientific-calculator:v1
       register: pull_result
       changed_when: "'Downloaded newer image' in pull_result.stdout or 'Pull complete' in pull_result.stdout"
 
@@ -19,7 +19,7 @@
       ignore_errors: yes
 
     - name: Run the Docker container
-      shell: docker run -it -d --name dev-cal akdev6298/scientific-dev-cal:latest
+      shell: docker run -it -d --name dev-cal akdev6298/scientific-calculator:v1
       register: run_result
       changed_when: "'Error' not in run_result.stderr"
 
