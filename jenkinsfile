@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    environment {
+        DOCKER_IMAGE_NAME = 'scientific-dev-cal'
+        GITHUB_REPO_URL = ''
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    git branch: 'main', url: GITHUB_REPO_URL
+                }
+            }
+        }
+
+        stage('Build and Test with Maven') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE_NAME .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'DockerHubCred', variable: 'DOCKER_HUB_PASSWORD')]) {
+                        sh '''
+                        docker tag $DOCKER_IMAGE_NAME akdev6298/$DOCKER_IMAGE_NAME:latest
+                        docker push akdev6298/$DOCKER_IMAGE_NAME:latest
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Run Ansible Playbook') {
+            steps {
+                script {
+                    withCredentials([
+                        string(credentialsId: 'LOCALPASS', variable: 'ANSIBLE_BECOME_PASS'),
+                        string(credentialsId: 'LOCALPASS', variable: 'ANSIBLE_SSH_PASS')
+                    ]) {
+                        sh '''
+                        ansible-playbook -i inventory.ini deploy.yml \
+                        --extra-vars "ansible_become_pass=$ANSIBLE_BECOME_PASS ansible_ssh_pass=$ANSIBLE_SSH_PASS"
+                        '''
+                    }
+                }
+            }
+        }
+    }
+}
