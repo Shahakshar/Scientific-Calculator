@@ -46,7 +46,7 @@ public class DevCal {
             System.out.println("3. Natural logarithm base e");
             System.out.println("4. Power function");
             System.out.println("5: Exit");
-            System.out.print("Select Which operation do you want to perform? -->");
+            System.out.print("Select Which operation do you want to perform? ===>");
 
             int op = sc.next().charAt(0);
 
