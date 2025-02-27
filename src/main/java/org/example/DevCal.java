@@ -37,7 +37,7 @@ public class DevCal {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("-----------------------------------Here is your scientific calculator----------------------------------");
+        System.out.println("------------------Here is your scientific calculator--------------------");
 
 
         while (true) {
