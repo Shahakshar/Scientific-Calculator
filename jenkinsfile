@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = "akdev6298/scientific-calculator:v1"
+        DOCKER_IMAGE = "akdev6298/scientific-cal:v1"
     }
     stages {
         stage('Clone Repository') {
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
-                    sh 'docker tag java-cal $DOCKER_IMAGE'
+                    sh 'docker tag dev-cal $DOCKER_IMAGE'
                     sh 'docker images'
                     sh 'docker push $DOCKER_IMAGE'
                 }
