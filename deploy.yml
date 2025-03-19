@@ -1,7 +1,7 @@
 - name: Deploy Calculator Container Using Docker CLI
   hosts: localhost
   remote_user: akshar
-  become: yes
+  become: false
   tasks:
     - name: Pull the latest Docker image from Docker Hub
       shell: docker pull akdev6298/scientific-calculator:v1
