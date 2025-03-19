@@ -4,7 +4,7 @@
   become: false
   tasks:
     - name: Pull the latest Docker image from Docker Hub
-      shell: docker pull akdev6298/scientific-calculator:v1
+      shell: docker pull akdev6298/scientific-cal:v1
 
     - name: Stop and remove any existing container with the same name
       shell: |
@@ -13,4 +13,4 @@
       ignore_errors: yes
 
     - name: Run the Docker container
-      shell: docker run -it -d --name dev-cal akdev6298/scientific-calculator:v1
+      shell: docker run -it -d --name dev-cal akdev6298/scientific-cal:v1
